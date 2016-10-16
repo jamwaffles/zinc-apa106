@@ -101,6 +101,16 @@ platformtree!(
 // const ONBIT: u8 = 0b11111100;		// 1.2 / .25us = 1.45us, 83% on time
 // const OFFBIT: u8 = 0b11000000;	// 0.5 / .91us = 1.41us, 35% on time
 
+struct Colour {
+	r: u8,
+	g: u8,
+	b: u8,
+}
+
+fn colour_to_raw(input: Colour) -> Vec<u8> {
+
+}
+
 fn run(args: &pt::run_args) {
 	let spi = spi::Spi::new(spi::SpiId::Spi0);
 
