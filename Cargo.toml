@@ -1,0 +1,29 @@
+[package]
+name = "zinc_from_scratch_launchpad"
+version = "0.1.0"
+authors = ["James Waples <jamwaffles@gmail.com>"]
+
+[dependencies]
+rust-libcore = "*"
+# regex = "*"
+
+[dependencies.zinc]
+# git = "https://github.com/jamwaffles/zinc"
+# branch = "tiva-c-regression-fix"
+path = "../zinc"
+features = [ "mcu_tiva_c" ]
+
+[dependencies.macro_platformtree]
+# git = "https://github.com/jamwaffles/zinc"
+# branch = "tiva-c-regression-fix"
+path = "../zinc/macro_platformtree"
+
+[dependencies.ioreg]
+# git = "https://github.com/jamwaffles/zinc"
+# branch = "tiva-c-regression-fix"
+path = "../zinc/ioreg"
+
+[dependencies.platformtree]
+# git = "https://github.com/jamwaffles/zinc"
+# branch = "tiva-c-regression-fix"
+path = "../zinc/platformtree"
