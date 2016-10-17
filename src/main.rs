@@ -135,33 +135,51 @@ fn run(args: &pt::run_args) {
 
 	args.uart.puts("Started\r\n");
 
+	let led = Apa106Led { red: 0x01, green: 0x00, blue: 0x00 };
+
+	let mut counter = 0;
+
 	loop {
-		let led1 = Apa106Led { red: 0xff, green: 0xff, blue: 0x00, };
-		let led2 = Apa106Led { red: 0x00, green: args.timer.get_counter() as u8, blue: 0x00 };
-		let led3 = Apa106Led { red: 0xff, green: 0x00, blue: 0x00 };
-		let led4 = Apa106Led { red: 0x88, green: 0x00, blue: 0xff };
+		// let led1 = Apa106Led { red: 0xff, green: 0xff, blue: 0x00, };
+		// let led2 = Apa106Led { red: 0x00, green: args.timer.get_counter() as u8, blue: 0x00 };
+		// let led3 = Apa106Led { red: 0xff, green: 0x00, blue: 0x00 };
+		// let led4 = Apa106Led { red: 0x88, green: 0x00, blue: 0xff };
 
-		let led1_send = colour_to_raw(&led1);
-		let led2_send = colour_to_raw(&led2);
-		let led3_send = colour_to_raw(&led3);
-		let led4_send = colour_to_raw(&led4);
+		// let led1_send = colour_to_raw(&led1);
+		// let led2_send = colour_to_raw(&led2);
+		// let led3_send = colour_to_raw(&led3);
+		// let led4_send = colour_to_raw(&led4);
 
-		for byte in led1_send.into_iter() {
-			spi.write(*byte);
+		// for byte in led1_send.into_iter() {
+		// 	spi.write(*byte);
+		// }
+
+		// for byte in led2_send.into_iter() {
+		// 	spi.write(*byte);
+		// }
+
+		// for byte in led3_send.into_iter() {
+		// 	spi.write(*byte);
+		// }
+
+		// for byte in led4_send.into_iter() {
+		// 	spi.write(*byte);
+		// }
+
+		for i in 0..64 {
+
+
+			for byte in colour_to_raw(&led).into_iter() {
+				spi.write(*byte);
+			}
 		}
 
-		for byte in led2_send.into_iter() {
-			spi.write(*byte);
+		counter += 1;
+
+		if counter > 255 {
+			counter = 0;
 		}
 
-		for byte in led3_send.into_iter() {
-			spi.write(*byte);
-		}
-
-		for byte in led4_send.into_iter() {
-			spi.write(*byte);
-		}
-
-		args.timer.wait_ms(100);
+		args.timer.wait(1);
 	}
 }
