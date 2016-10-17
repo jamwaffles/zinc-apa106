@@ -131,6 +131,8 @@ fn colour_to_raw(input: &Apa106Led) -> [u8; 12] {
 fn run(args: &pt::run_args) {
 	let spi = spi::Spi::new(spi::SpiId::Spi0);
 
+	args.spi_tx.enable_pulldown();
+
 	args.uart.puts("Started\r\n");
 
 	let led1 = Apa106Led {
@@ -149,12 +151,6 @@ fn run(args: &pt::run_args) {
 	let led2_send = colour_to_raw(&led2);
 
 	loop {
-		for _ in 0..24 {
-			spi.write(0b00010001);
-		}
-
-		args.timer.wait_us(60);
-
 		for byte in led1_send.into_iter() {
 			spi.write(*byte);
 		}
