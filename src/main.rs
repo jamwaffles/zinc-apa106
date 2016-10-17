@@ -87,20 +87,66 @@ platformtree!(
 	}
 );
 
-struct Colour {
-	r: u8,
-	g: u8,
-	b: u8,
+const ON_NIBBLE: u8 = 0b0111;
+const OFF_NIBBLE: u8 = 0b0001;
+
+struct Apa106Led {
+	red: u8,
+	green: u8,
+	blue: u8,
 }
 
-fn colour_to_raw(input: Colour) -> Vec<u8> {
+fn bit_is_set(byte: u8, bit_index: u8) -> bool {
+	(byte & (1 << bit_index)) != 0
+}
 
+/// Send a Colour struct out the SPI port
+/// Each byte in a colour triplet is converted into 8 nibbles and sent as 4 sequential bytes down the SPI line
+fn colour_to_raw(input: &Apa106Led) -> [u8; 12] {
+	// ((a << 4) | (b & 0b1111)).toString(2)
+
+	let mut bytes: [u8; 12] = [0; 12];
+
+	// SPI transmits MSB first, so first bit = upper nibble
+	for pos in 0..4 {
+		let red_upper = if bit_is_set(input.red, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
+		let red_lower = if bit_is_set(input.red, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+
+		bytes[pos as usize] = (red_upper << 4) | (red_lower & 0b1111);
+
+		let green_upper = if bit_is_set(input.green, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
+		let green_lower = if bit_is_set(input.green, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+
+		bytes[(pos + 4) as usize] = (green_upper << 4) | (green_lower & 0b1111);
+
+		let blue_upper = if bit_is_set(input.blue, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
+		let blue_lower = if bit_is_set(input.blue, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+
+		bytes[(pos + 8) as usize] = (blue_upper << 4) | (blue_lower & 0b1111);
+	}
+
+	bytes
 }
 
 fn run(args: &pt::run_args) {
 	let spi = spi::Spi::new(spi::SpiId::Spi0);
 
 	args.uart.puts("Started\r\n");
+
+	let led1 = Apa106Led {
+		red: 0xff,
+		green: 0xff,
+		blue: 0x00,
+	};
+
+	let led2 = Apa106Led {
+		red: 0x00,
+		green: 0xff,
+		blue: 0x00
+	};
+
+	let led1_send = colour_to_raw(&led1);
+	let led2_send = colour_to_raw(&led2);
 
 	loop {
 		for _ in 0..24 {
@@ -109,37 +155,13 @@ fn run(args: &pt::run_args) {
 
 		args.timer.wait_us(60);
 
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-		spi.write(0b01110111);
+		for byte in led1_send.into_iter() {
+			spi.write(*byte);
+		}
 
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-
-		// ---
-
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-		spi.write(0b01110111);
-
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-		spi.write(0b00010001);
-		spi.write(0b00010001);
+		for byte in led2_send.into_iter() {
+			spi.write(*byte);
+		}
 
 		args.timer.wait(1);
 	}
