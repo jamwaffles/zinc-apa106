@@ -123,8 +123,8 @@ fn colour_to_byte_raw(input: &Apa106Led) -> [u8; 24] {
 // const ON_NIBBLE: u8 = 0b1110_0000;
 // const OFF_NIBBLE: u8 = 0b1000_0000;
 
-const ON_NIBBLE: u8 = 0b0000_0111;
-const OFF_NIBBLE: u8 = 0b0000_0001;
+const ON_NIBBLE: u8 = 0b1110;
+const OFF_NIBBLE: u8 = 0b1000;
 
 /// Send a Colour struct out the SPI port
 /// Each byte in a colour triplet is converted into 8 nibbles and sent as 4 sequential bytes down the SPI line
@@ -144,13 +144,13 @@ fn colour_to_raw(input: &Apa106Led) -> [u8; 12] {
 		let green_upper = if bit_is_set(input.green, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
 		let green_lower = if bit_is_set(input.green, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
 
-		bytes[7 - (pos + 4) as usize] = (green_upper << 4) | (green_lower & 0b1111);
+		bytes[4 + (3 - pos) as usize] = (green_upper << 4) | (green_lower & 0b1111);
 		// bytes[(pos + 4) as usize] = 0;
 
 		let blue_upper = if bit_is_set(input.blue, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
 		let blue_lower = if bit_is_set(input.blue, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
 
-		bytes[11 - (pos + 8) as usize] = (blue_upper << 4) | (blue_lower & 0b1111);
+		bytes[8 + (3 - pos) as usize] = (blue_upper << 4) | (blue_lower & 0b1111);
 		// bytes[(pos + 8) as usize] = 0;
 	}
 
@@ -168,80 +168,6 @@ fn run(args: &pt::run_args) {
 
 	args.uart.puts("Started\r\n");
 
-
-
-
-	// let freq = 3_200_000;
-	// let mut cpsdvsr: u16 = 0;
-	// let mut shit: u16 = 0;
-
-
-	// let sysclk = sysctl::clock::sysclk_get() as u32;
-
-	// let mut divisor: u32 = 2;
-
-	// while divisor <= 254 {
-	//   let prescale_hz = sysclk / divisor;
-
-	//   // Calculate exponent
-	//   // let scr = ((prescale_hz as f32 / freq as f32) + 0.5f32) as u32;
-	//   let scr = (prescale_hz / freq);
-
-	//   args.uart.puts("\r\n");
-
-	//   // args.uart.puts("PRESCALE ");
-	//   // 	args.uart.puti(prescale_hz as u32);
-	//   // 	args.uart.puts("\r\n");
-
-	//   // args.uart.puts("CLK ");
-	//   // 	args.uart.puti(sysclk as u32);
-	//   // 	args.uart.puts("\r\n");
-
-	//   // 	args.uart.puts("DVSR ");
-	//   // 	args.uart.puti(divisor as u32);
-	//   // 	args.uart.puts("\r\n");
-
-	//   // 	args.uart.puts("SCR ");
-	//   // 	args.uart.puti(scr as u32);
-	//   // 	args.uart.puts("\r\n");
-
-	//   // Check we can support the divider
-	//   if scr < 256 {
-	//   	args.uart.puts("CLK ");
-	//   	args.uart.puti(sysclk as u32);
-	//   	args.uart.puts("\r\n");
-
-	//   	args.uart.puts("DVSR ");
-	//   	args.uart.puti(divisor as u32);
-	//   	args.uart.puts("\r\n");
-
-	//   	args.uart.puts("SCR ");
-	//   	args.uart.puti(scr as u32);
-	//   	args.uart.puts("\r\n");
-
-	//     break;
-	//   }
-
-	//   divisor += 2;
-	// }
-
-
-
-
-	// let (clk, dvsr, scr) = spi.get_regs();
-
-	// args.uart.puts("CLK ");
-	// args.uart.puti(clk as u32);
-	// args.uart.puts("\r\n");
-
-	// args.uart.puts("DVSR ");
-	// args.uart.puti(cpsdvsr as u32);
-	// args.uart.puts("\r\n");
-
-	// args.uart.puts("SCR ");
-	// args.uart.puti(shit as u32);
-	// args.uart.puts("\r\n");
-
 	let mut counter = 0;
 
 	let blank = Apa106Led { red: 0x00, green: 0x00, blue: 0x00 };
@@ -252,97 +178,27 @@ fn run(args: &pt::run_args) {
 	args.uart.puti(shit as u32);
 	args.uart.puts("      ");
 
-	// // for i in 0..64 {
-	// 	for byte in blank_bytes.into_iter() {
-	// 		// args.uart.puti(*byte as u32);
-	// 		// args.uart.puts(" ");
-	// 		// spi.write(*byte);
-	// 		spi.write(0b0001_0001);
-	// 	}
-	// }
-
-	// spi.write(blank_bytes[0]);
-	// spi.write(blank_bytes[1]);
-	// spi.write(blank_bytes[2]);
-	// spi.write(blank_bytes[3]);
-	// spi.write(blank_bytes[4]);
-	// spi.write(blank_bytes[5]);
-	// spi.write(blank_bytes[6]);
-	// spi.write(blank_bytes[7]);
-	// spi.write(blank_bytes[8]);
-	// spi.write(blank_bytes[9]);
-	// spi.write(blank_bytes[10]);
-	// spi.write(blank_bytes[11]);
-
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
-	spi.write(0b0001_0001);
+	for i in 0..64 {
+		for byte in blank_bytes.into_iter() {
+			spi.write(*byte);
+		}
+	}
 
 	loop {
 		args.timer.wait(1);
 
-		// let led1 = Apa106Led { red: 0xff, green: 0xff, blue: 0x00, };
-		// let led2 = Apa106Led { red: 0x00, green: args.timer.get_counter() as u8, blue: 0x00 };
-		// let led3 = Apa106Led { red: 0xff, green: 0x00, blue: 0x00 };
-		// let led4 = Apa106Led { red: 0x88, green: 0x00, blue: 0xff };
+		let led = Apa106Led { red: 0x02, green: 0x01, blue: 0x00 };
 
-		// let led1_send = colour_to_raw(&led1);
-		// let led2_send = colour_to_raw(&led2);
-		// let led3_send = colour_to_raw(&led3);
-		// let led4_send = colour_to_raw(&led4);
+		for i in 0..64 {
+			for byte in colour_to_raw(&led).into_iter() {
+				spi.write(*byte);
+			}
+		}
 
-		// for byte in led1_send.into_iter() {
-		// 	spi.write(*byte);
-		// }
+		counter += 1;
 
-		// for byte in led2_send.into_iter() {
-		// 	spi.write(*byte);
-		// }
-
-		// for byte in led3_send.into_iter() {
-		// 	spi.write(*byte);
-		// }
-
-		// for byte in led4_send.into_iter() {
-		// 	spi.write(*byte);
-		// }
-
-		// let led = Apa106Led { red: 0x02, green: 0x00, blue: 0x00 };
-
-		// for i in 0..64 {
-			// for byte in colour_to_raw(&led).into_iter() {
-			// 	spi.write(*byte);
-			// }
-		// }
-
-		// counter += 1;
-
-		// if counter > 250 {
-		// 	counter = 0;
-		// }
-
-
-
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1110);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
-		spi.write(0b1000_1000);
+		if counter > 250 {
+			counter = 0;
+		}
 	}
 }
