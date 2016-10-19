@@ -9,7 +9,6 @@ use zinc::hal::spi::Spi;
 use zinc::hal::timer::Timer;
 use zinc::drivers::chario::CharIO;
 use zinc::hal::tiva_c::spi;
-use zinc::hal::tiva_c::sysctl;
 
 platformtree!(
 	tiva_c@mcu {
@@ -160,7 +159,8 @@ fn run(args: &pt::run_args) {
 
 	args.uart.puts("Started\r\n");
 
-	let mut counter = 0;
+	let mut counter: i16 = 0;
+	let mut inc: i16 = 1;
 
 	let blank = Apa106Led { red: 0x00, green: 0x00, blue: 0x00 };
 	let blank_bytes = colour_to_raw(&blank);
@@ -172,9 +172,9 @@ fn run(args: &pt::run_args) {
 	}
 
 	loop {
-		args.timer.wait(1);
+		args.timer.wait_ms(16);
 
-		let led = Apa106Led { red: counter, green: 0x00, blue: 0x00 };
+		let led = Apa106Led { red: counter as u8, green: 0x00, blue: 0x00 };
 
 		for _ in 0..64 {
 			for byte in colour_to_raw(&led).into_iter() {
@@ -182,10 +182,10 @@ fn run(args: &pt::run_args) {
 			}
 		}
 
-		counter += 1;
+		counter += inc;
 
-		if counter > 250 {
-			counter = 0;
+		if counter > 250 || counter == 0 {
+			inc *= -1;
 		}
 	}
 }
