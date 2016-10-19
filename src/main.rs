@@ -93,30 +93,8 @@ struct Apa106Led {
 	blue: u8,
 }
 
-const ON_BYTE: u8 = 0b1111_1100;
-const OFF_BYTE: u8 = 0b1100_0000;
-
 fn bit_is_set(byte: u8, bit_index: u8) -> bool {
 	(byte & (1 << bit_index)) != 0
-}
-
-/// Send a Colour struct out the SPI port
-/// Each byte in a colour triplet is converted into 8 nibbles and sent as 4 sequential bytes down the SPI line
-fn colour_to_byte_raw(input: &Apa106Led) -> [u8; 24] {
-	// ((a << 4) | (b & 0b1111)).toString(2)
-
-	let mut bytes: [u8; 24] = [0; 24];
-
-	// SPI transmits MSB first
-	for pos in 0..8 {
-		bytes[7 - pos as usize] = if bit_is_set(input.red, pos as u8) { ON_BYTE } else { OFF_BYTE };
-
-		bytes[8 + (7 - pos as usize)] = if bit_is_set(input.green, pos as u8) { ON_BYTE } else { OFF_BYTE };
-
-		bytes[16 + (7 - pos as usize)] = if bit_is_set(input.blue, pos as u8) { ON_BYTE } else { OFF_BYTE };
-	}
-
-	bytes
 }
 
 const ON_NIBBLE: u8 = 0b1110;
