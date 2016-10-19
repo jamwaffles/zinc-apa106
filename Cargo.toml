@@ -5,25 +5,19 @@ authors = ["James Waples <jamwaffles@gmail.com>"]
 
 [dependencies]
 rust-libcore = "*"
-# regex = "*"
 
 [dependencies.zinc]
-# git = "https://github.com/jamwaffles/zinc"
-# branch = "tiva-c-regression-fix"
-path = "../zinc"
+git = "https://github.com/hackndev/zinc"
 features = [ "mcu_tiva_c" ]
 
 [dependencies.macro_platformtree]
-# git = "https://github.com/jamwaffles/zinc"
-# branch = "tiva-c-regression-fix"
-path = "../zinc/macro_platformtree"
+git = "https://github.com/hackndev/zinc"
+path = "/macro_platformtree"
 
 [dependencies.ioreg]
-# git = "https://github.com/jamwaffles/zinc"
-# branch = "tiva-c-regression-fix"
-path = "../zinc/ioreg"
+git = "https://github.com/hackndev/zinc"
+path = "/ioreg"
 
 [dependencies.platformtree]
-# git = "https://github.com/jamwaffles/zinc"
-# branch = "tiva-c-regression-fix"
-path = "../zinc/platformtree"
+git = "https://github.com/hackndev/zinc"
+path = "/platformtree"

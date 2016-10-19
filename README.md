@@ -2,8 +2,6 @@
 
 This project is a scratchpad for developing control software for the APA106 serially controllable LED in Rust.
 
-It currently depends on a weird local build of Zinc so is probably not out-of-the-box buildable right now. That should change when [my pull request adding SPI support](https://github.com/hackndev/zinc/pull/401) is merged into the main Zinc project.
-
 ## APA106 timing
 
 The APA106 is similar to the WS2812 in that is uses a single wire, timing-based bus to operate, however the timings are slightly different. Cycle time is 1.71us per bit, and a 1 or 0 is dictated by the duty cycle as below:
