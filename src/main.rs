@@ -88,14 +88,14 @@ platformtree!(
 	}
 );
 
-const ON_BYTE: u8 = 0b1111_1000;
-const OFF_BYTE: u8 = 0b1100_0000;
-
 struct Apa106Led {
 	red: u8,
 	green: u8,
 	blue: u8,
 }
+
+const ON_BYTE: u8 = 0b1111_1100;
+const OFF_BYTE: u8 = 0b1100_0000;
 
 fn bit_is_set(byte: u8, bit_index: u8) -> bool {
 	(byte & (1 << bit_index)) != 0
@@ -119,9 +119,6 @@ fn colour_to_byte_raw(input: &Apa106Led) -> [u8; 24] {
 
 	bytes
 }
-
-// const ON_NIBBLE: u8 = 0b1110_0000;
-// const OFF_NIBBLE: u8 = 0b1000_0000;
 
 const ON_NIBBLE: u8 = 0b1110;
 const OFF_NIBBLE: u8 = 0b1000;
