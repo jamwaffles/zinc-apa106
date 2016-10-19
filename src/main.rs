@@ -170,11 +170,6 @@ fn run(args: &pt::run_args) {
 	let blank = Apa106Led { red: 0x00, green: 0x00, blue: 0x00 };
 	let blank_bytes = colour_to_raw(&blank);
 
-	let shit = 0b0001_0001;
-
-	args.uart.puti(shit as u32);
-	args.uart.puts("      ");
-
 	for _ in 0..64 {
 		for byte in blank_bytes.into_iter() {
 			spi.write(*byte);
