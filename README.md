@@ -1,17 +1,18 @@
-# Zinc on a Stellaris Launchpad/Tiva C
+# Rusty APA106
 
-This project contains example code to flash the red and blue LEDs on a Stellaris Launchpad using the [Zinc](https://zinc.rs) embedded development framework. It should also work on a Tiva C, which is supposedly binary- and pin-compatible with the Stellaris Launchpad, but I've been unable to test as I don't have a Tiva board yet.
+This project is a scratchpad for developing control software for the APA106 serially controllable LED in Rust.
 
-## Building
+It currently depends on a weird local build of Zinc so is probably not out-of-the-box buildable right now. That should change when [my pull request adding SPI support](https://github.com/hackndev/zinc/pull/401) is merged into the main Zinc project.
 
-You need to have the `arm-none-eabi-gcc` toolchain installed as per the usual Zinc setup instructions. You can install it on macOS with `brew install gcc-arm-none-eabi`.
+## APA106 timing
 
-Once that's done, run `make` which will use Cargo to build the project and produce a binary file ready for flashing to the device.
+The APA106 is similar to the WS2812 in that is uses a single wire, timing-based bus to operate, however the timings are slightly different. Cycle time is 1.71us per bit, and a 1 or 0 is dictated by the duty cycle as below:
 
-The flashable bin file will be in `/target/thumbv7em-none-eabi/release/zinc_from_scratch_launchpad.bin` (note the `.bin` extension).
+| Description | Time |
+| --- | --- |
+| 0 bit on time | 0.35us
+| 0 bit off time | 1.36us
+| 1 bit on time | 1.36us
+| 1 bit off time | 0.35us
 
-## Flashing
-
-I'm using a Mac, so flashing is done by acquiring [lm4tools](https://github.com/utzig/lm4tools), compiling it with `make` and running `./lm4tools/lm4flash/lm4flash /path/to/binary.bin`.
-
-If all has gone well you should see the red and blue LEDs flashing alternately.
+There are a lot of libraries out there that use finely tuned assembly routines to generate the correct signalling, however I took the same approach as [Espruino](http://www.espruino.com/WS2811) and used the SPI bus on the TM4C123GH6PM micro. To generate the correct waveform I use two different nibbles (MSB sent first); `0b1000` is an "off" pulse and `0b1110` is an "on" pulse.
