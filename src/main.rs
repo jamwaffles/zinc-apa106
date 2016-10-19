@@ -158,8 +158,6 @@ fn run(args: &pt::run_args) {
 		frequency: 2_339_181
 	});
 
-	args.spi_tx.enable_pulldown();
-
 	args.uart.puts("Started\r\n");
 
 	let mut counter = 0;
