@@ -175,7 +175,7 @@ fn run(args: &pt::run_args) {
 	args.uart.puti(shit as u32);
 	args.uart.puts("      ");
 
-	for i in 0..64 {
+	for _ in 0..64 {
 		for byte in blank_bytes.into_iter() {
 			spi.write(*byte);
 		}
@@ -184,9 +184,9 @@ fn run(args: &pt::run_args) {
 	loop {
 		args.timer.wait(1);
 
-		let led = Apa106Led { red: 0x02, green: 0x01, blue: 0x00 };
+		let led = Apa106Led { red: counter, green: 0x00, blue: 0x00 };
 
-		for i in 0..64 {
+		for _ in 0..64 {
 			for byte in colour_to_raw(&led).into_iter() {
 				spi.write(*byte);
 			}
