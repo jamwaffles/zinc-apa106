@@ -135,23 +135,20 @@ fn colour_to_raw(input: &Apa106Led) -> [u8; 12] {
 
 	// SPI transmits MSB first, so first bit = upper nibble
 	for pos in 0..4 {
-		let red_upper = if bit_is_set(input.red, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
-		let red_lower = if bit_is_set(input.red, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+		let red_upper = if bit_is_set(input.red, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+		let red_lower = if bit_is_set(input.red, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
 
 		bytes[3 - pos as usize] = (red_upper << 4) | (red_lower & 0b1111);
-		// bytes[pos as usize] = (red_upper & 0b11110000) | red_lower >> 4;
 
-		let green_upper = if bit_is_set(input.green, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
-		let green_lower = if bit_is_set(input.green, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+		let green_upper = if bit_is_set(input.green, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+		let green_lower = if bit_is_set(input.green, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
 
 		bytes[4 + (3 - pos) as usize] = (green_upper << 4) | (green_lower & 0b1111);
-		// bytes[(pos + 4) as usize] = 0;
 
-		let blue_upper = if bit_is_set(input.blue, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
-		let blue_lower = if bit_is_set(input.blue, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+		let blue_upper = if bit_is_set(input.blue, pos * 2 + 1) { ON_NIBBLE } else { OFF_NIBBLE };
+		let blue_lower = if bit_is_set(input.blue, pos * 2) { ON_NIBBLE } else { OFF_NIBBLE };
 
 		bytes[8 + (3 - pos) as usize] = (blue_upper << 4) | (blue_lower & 0b1111);
-		// bytes[(pos + 8) as usize] = 0;
 	}
 
 	bytes
